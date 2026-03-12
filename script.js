@@ -581,6 +581,10 @@ USER PRIORITY:
                         
                         // 立即应用新背景到聊天界面
                         chatDetail.style.backgroundImage = `url(${tempBgImage})`;
+                        chatMessages.style.backgroundImage = `url(${tempBgImage})`;
+                        chatMessages.style.backgroundSize = 'cover';
+                        chatMessages.style.backgroundPosition = 'center';
+                        chatMessages.style.backgroundRepeat = 'no-repeat';
                     }
                 }
             };
@@ -591,12 +595,34 @@ USER PRIORITY:
     // 恢复默认背景按钮
     if (resetBgBtn) {
         resetBgBtn.addEventListener('click', () => {
+            // 重置预览区域
             currentBgPreview.style.backgroundImage = '';
             currentBgPreview.innerHTML = `
                 <i class="fa-solid fa-image" style="font-size: 24px; color: #555;"></i>
                 <span style="margin-top: 8px; color: #888; font-size: 14px;">点击更换背景</span>
             `;
             bgUpload.value = null; // 清空文件选择
+            tempBgImage = null; // 清除临时背景图变量
+            
+            // 立即应用黑色背景到聊天界面
+            const charId = chatDetail.getAttribute('data-current-char-id');
+            if (charId) {
+                const contacts = storage.load('contacts');
+                const contactIndex = contacts.findIndex(c => c.id == charId);
+                
+                if (contactIndex !== -1) {
+                    // 更新联系人设置，移除背景图
+                    contacts[contactIndex].chatBg = null;
+                    storage.save('contacts', contacts);
+                    
+                    // 立即应用到聊天界面
+                    chatDetail.style.backgroundImage = 'none';
+                    chatDetail.style.backgroundColor = '#000';
+                    chatMessages.style.backgroundImage = 'none';
+                    chatMessages.style.backgroundColor = 'transparent';
+                }
+            }
+            
             applyBounce(resetBgBtn);
         });
     }
@@ -641,14 +667,19 @@ USER PRIORITY:
                     bubbleOpacity: opacitySlider.value
                 };
                 
+                // 保存到 localStorage
                 storage.save('contacts', contacts);
                 
-                // 立即应用新背景
+                // 立即应用到聊天界面
                 if (chatBg) {
                     chatDetail.style.backgroundImage = `url(${chatBg})`;
+                    chatMessages.style.backgroundImage = `url(${chatBg})`;
                 } else {
-                    // 恢复默认背景
-                    chatDetail.style.backgroundImage = 'url("https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop")';
+                    // 使用纯黑色背景
+                    chatDetail.style.backgroundImage = 'none';
+                    chatDetail.style.backgroundColor = '#000';
+                    chatMessages.style.backgroundImage = 'none';
+                    chatMessages.style.backgroundColor = 'transparent';
                 }
                 
                 // 应用透明度设置
@@ -766,9 +797,13 @@ USER PRIORITY:
                     // 应用聊天背景
                     if (contact.chatBg) {
                         chatDetail.style.backgroundImage = `url(${contact.chatBg})`;
+                        chatMessages.style.backgroundImage = `url(${contact.chatBg})`;
                     } else {
-                        // 恢复默认背景
-                        chatDetail.style.backgroundImage = 'url("https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop")';
+                        // 使用纯黑色背景
+                        chatDetail.style.backgroundImage = 'none';
+                        chatDetail.style.backgroundColor = '#000';
+                        chatMessages.style.backgroundImage = 'none';
+                        chatMessages.style.backgroundColor = 'transparent';
                     }
                     
                     // 应用透明度设置
@@ -1278,8 +1313,9 @@ USER PRIORITY:
                     if (contact.chatBg) {
                         chatDetail.style.backgroundImage = `url(${contact.chatBg})`;
                     } else {
-                        // 恢复默认背景
-                        chatDetail.style.backgroundImage = 'url("https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop")';
+                        // 使用纯黑色背景
+                        chatDetail.style.backgroundImage = 'none';
+                        chatDetail.style.backgroundColor = '#000';
                     }
                     
                     // 应用透明度设置

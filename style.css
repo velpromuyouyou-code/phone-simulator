@@ -908,7 +908,7 @@ body {
 
 /* 聊天详情 (Telegram 风格) */
 #chat-detail {
-    background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop'); /* 磨砂深色艺术背景 */
+    /* 移除背景色设置，让JavaScript设置的背景图片可以显示 */
     background-size: cover;
     background-position: center;
 }
@@ -1062,48 +1062,86 @@ body {
     margin-bottom: 10px;
 }
 
+/* 使用CSS变量存储气泡透明度，方便JS动态修改 */
+:root {
+    --bubble-opacity: 0.8;
+}
+
 .message-bubble {
     max-width: 80%;
-    padding: 12px 16px; /* 减小内边距使气泡更扁 */
-    border-radius: 20px; /* 稍微减小圆角 */
+    padding: 12px 16px;
+    border-radius: 22px;
     position: relative;
     font-size: 15px;
     line-height: 1.5;
     margin-bottom: 10px;
-    background: #222; /* 默认灰色背景 */
-    color: #f0f0f0; /* 不那么刺眼的白色文字 */
-    border: none; /* 去掉边框 */
-    box-shadow: none; /* 去掉阴影效果 */
-    transform-style: flat; /* 移除3D效果 */
+    background: rgba(34, 34, 34, var(--bubble-opacity));
+    color: #f0f0f0;
+    border: 1px solid rgba(255, 255, 255, 0.7); /* 更亮的边框增强光泽感 */
+    box-shadow: 
+        inset 0 3px 12px rgba(255, 255, 255, 0.35), /* 增强内部高光效果 */
+        0 10px 25px rgba(0, 0, 0, 0.25); /* 更深的阴影增加立体感 */
+    backdrop-filter: blur(15px); /* 增强毛玻璃效果 */
+    -webkit-backdrop-filter: blur(15px);
+    overflow: hidden;
 }
 
 .message-bubble.received {
     align-self: flex-start;
-    background: #2a2a2a; /* 深灰色，但不是纯黑 */
-    color: #f0f0f0; /* 不那么刺眼的白色 */
+    background: rgba(42, 42, 42, var(--bubble-opacity)); /* 使用变量控制透明度 */
+    color: #f5f5f5; /* 更亮的白色文字增加对比度 */
     border-bottom-left-radius: 8px;
-    text-shadow: none; /* 移除文字阴影 */
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3); /* 增强文字阴影提高可读性 */
 }
 
 .message-bubble.sent {
     align-self: flex-end;
-    background: #007AFF; /* 苹果蓝色 */
+    background: rgba(0, 122, 255, var(--bubble-opacity)); /* 使用变量控制透明度 */
     color: #fff; /* 纯白色文字 */
-    border-top-right-radius: 8px; /* 右上角圆角减小 */
-    border-bottom-right-radius: 20px; /* 右下角圆角增大 */
-    text-shadow: none; /* 移除文字阴影 */
-    border: none; /* 移除边框 */
-    box-shadow: none; /* 移除阴影效果 */
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 22px; /* 右下角圆角与整体圆角一致 */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* 增强文字阴影 */
 }
 
-/* 移除泡泡表面的额外光泽层和反光效果 */
-.message-bubble::before,
+/* 增强气泡的光泽效果 */
+.message-bubble::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60%;  /* 增加高度覆盖范围 */
+    background: linear-gradient(to bottom, 
+                rgba(255, 255, 255, 0.6) 0%, 
+                rgba(255, 255, 255, 0.3) 30%, 
+                rgba(255, 255, 255, 0.15) 60%,
+                rgba(255, 255, 255, 0) 100%);
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0.95;  /* 增加透明度，使光泽更明显 */
+    z-index: 1;
+}
+
 .message-bubble::after {
-    display: none;
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 55%;
+    background: linear-gradient(to top, 
+                rgba(0, 0, 0, 0.3) 0%, 
+                rgba(0, 0, 0, 0.15) 30%,
+                rgba(0, 0, 0, 0) 100%);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
 }
 
+/* 添加气泡内容区域的z-index确保文字显示在高光效果之上 */
 .message-text {
-    /* 移除底部间距，因为时间不在里面了 */
+    position: relative;
+    z-index: 2;
 }
 
 .message-time {
