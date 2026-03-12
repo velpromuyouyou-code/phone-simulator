@@ -6,13 +6,19 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #000; /* 改为黑色背景，避免白边 */
+}
+
 body {
-    background-color: #f0f2f5;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    overflow: hidden;
 }
 
 /* 手机容器 - 修改为全屏尺寸 */
@@ -234,9 +240,9 @@ body {
     will-change: transform;
 }
 
-/* 消息应用顶部栏 */
+/* 消息应用顶部栏 - 调整内边距适配iPhone 15 Pro Max */
 .app-header {
-    padding: 70px 30px 20px; /* 增加内边距 */
+    padding: 50px 30px 20px; /* 减少顶部内边距，解决顶部白边问题 */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -800,7 +806,7 @@ body {
 }
 
 .modal-header {
-    padding: 60px 20px 15px;
+    padding: 50px 20px 15px; /* 减少顶部内边距以匹配app-header */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -867,7 +873,7 @@ body {
 
 .chat-detail-header {
     background: transparent !important;
-    padding: 60px 15px 15px;
+    padding: 50px 15px 15px; /* 减少顶部内边距以匹配app-header */
     border-bottom: none;
     display: flex;
     justify-content: space-between;
@@ -1008,77 +1014,88 @@ body {
     position: relative;
     font-size: 15px;
     line-height: 1.5;
-    backdrop-filter: blur(25px) saturate(200%);
-    -webkit-backdrop-filter: blur(25px) saturate(200%);
+    backdrop-filter: blur(30px) saturate(250%);
+    -webkit-backdrop-filter: blur(30px) saturate(250%);
     
     /* 边缘高透有光泽感的核心设置 - 增强效果 */
-    border: 1.5px solid rgba(255, 255, 255, 0.6); /* 增加边框亮度 */
+    border: 1.5px solid rgba(255, 255, 255, 0.75); /* 增加边框亮度，更明显的高光边缘 */
     box-shadow: 
-        inset 0 6px 15px rgba(255, 255, 255, 0.7),  /* 增强顶部内高光，模拟更强烈的球体反光 */
-        inset 0 -6px 10px rgba(0, 0, 0, 0.15),      /* 增强底部内阴影立体感 */
-        0 15px 35px rgba(0, 0, 0, 0.25),           /* 更深邃的外部投影 */
-        0 0 15px rgba(255, 255, 255, 0.15);        /* 整体轻微发光效果 */
+        inset 0 8px 20px rgba(255, 255, 255, 0.8),  /* 增强顶部内高光，更强烈的球体反光 */
+        inset 0 -8px 12px rgba(0, 0, 0, 0.2),       /* 增强底部内阴影立体感 */
+        0 18px 40px rgba(0, 0, 0, 0.25),            /* 更深邃的外部投影 */
+        0 0 20px rgba(255, 255, 255, 0.2);          /* 整体更明显的发光效果 */
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     margin-bottom: 12px;
-    /* 轻微玻璃质感 */
-    background: rgba(255, 255, 255, 0.1);
+    /* 增强毛玻璃质感 */
+    background: rgba(255, 255, 255, 0.12);
     transform-style: preserve-3d;
+    /* 添加变量以控制气泡透明度 */
+    opacity: var(--bubble-opacity, 0.8);
 }
 
 .message-bubble.received {
     align-self: flex-start;
     /* 增强的浅色毛玻璃质感 */
     background: linear-gradient(145deg, 
-        rgba(255, 255, 255, 0.4) 0%, 
-        rgba(255, 255, 255, 0.2) 50%,
-        rgba(255, 255, 255, 0.1) 100%);
+        rgba(255, 255, 255, 0.5) 0%, 
+        rgba(255, 255, 255, 0.25) 40%,
+        rgba(255, 255, 255, 0.12) 100%);
     color: #fff;
     border-bottom-left-radius: 10px;
     text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    /* 提高边缘透明度 */
+    border: 1.5px solid rgba(255, 255, 255, 0.8);
 }
 
 .message-bubble.sent {
     align-self: flex-end;
     /* 增强的蓝色水润泡泡质感 */
     background: linear-gradient(145deg, 
-        rgba(0, 122, 255, 0.6) 0%, 
-        rgba(0, 122, 255, 0.4) 40%,
-        rgba(0, 122, 255, 0.2) 100%);
+        rgba(0, 122, 255, 0.7) 0%, 
+        rgba(0, 122, 255, 0.5) 40%,
+        rgba(0, 122, 255, 0.25) 100%);
     color: #fff;
     border-bottom-right-radius: 10px;
-    border: 1.5px solid rgba(255, 255, 255, 0.7); /* 更亮的边框 */
+    border: 1.5px solid rgba(255, 255, 255, 0.85); /* 更亮的边框 */
     text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    /* 为发送的消息增加额外的光泽 */
+    box-shadow: 
+        inset 0 10px 25px rgba(255, 255, 255, 0.9),
+        inset 0 -10px 15px rgba(0, 0, 0, 0.25),
+        0 20px 45px rgba(0, 0, 0, 0.3),
+        0 0 25px rgba(0, 122, 255, 0.2);
 }
 
 /* 泡泡表面的额外光泽层 - 增强效果 */
 .message-bubble::before {
     content: '';
     position: absolute;
-    top: 2px;
-    left: 10%;
-    right: 10%;
-    height: 50%;
+    top: 0;
+    left: 5%;
+    right: 5%;
+    height: 60%;
     background: linear-gradient(to bottom, 
-        rgba(255,255,255,0.7) 0%, /* 更亮的顶部高光 */
-        rgba(255,255,255,0.4) 40%,
-        rgba(255,255,255,0.1) 70%,
+        rgba(255,255,255,0.9) 0%, /* 更亮的顶部高光 */
+        rgba(255,255,255,0.6) 30%,
+        rgba(255,255,255,0.2) 60%,
         transparent 100%);
     border-radius: 50% / 100% 100% 0 0;
     pointer-events: none;
+    opacity: 0.8;
 }
 
 /* 添加底部微弱反光效果，增强泡泡质感 */
 .message-bubble::after {
     content: '';
     position: absolute;
-    bottom: 6px;
-    left: 20%;
-    right: 20%;
-    height: 15%;
-    background: linear-gradient(to top, rgba(255,255,255,0.15), transparent);
+    bottom: 4px;
+    left: 15%;
+    right: 15%;
+    height: 20%;
+    background: linear-gradient(to top, rgba(255,255,255,0.25), transparent);
     border-radius: 50% / 0 0 100% 100%;
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.85;
 }
 
 .message-text {

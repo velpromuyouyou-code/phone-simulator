@@ -1,22 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 更新状态栏时间
-    function updateClock() {
-        const clockElement = document.getElementById('clock');
-        const now = new Date();
-        let hours = now.getHours();
-        let minutes = now.getMinutes();
-        
-        // 补零
-        hours = hours < 10 ? '0' + hours : hours;
-        minutes = minutes < 10 ? '0' + minutes : minutes;
-        
-        clockElement.textContent = `${hours}:${minutes}`;
-    }
-
-    // 初始化时间并每秒更新
-    updateClock();
-    setInterval(updateClock, 1000);
-
+    // 状态栏已移除，不再需要更新时间
+    
     // 数据存储与加载逻辑
     const storage = {
         save: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
@@ -266,14 +250,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentTime = new Date();
         const formattedTime = `${currentTime.getFullYear()}年${currentTime.getMonth() + 1}月${currentTime.getDate()}日 ${currentTime.getHours().toString().padStart(2, '0')}:${currentTime.getMinutes().toString().padStart(2, '0')}:${currentTime.getSeconds().toString().padStart(2, '0')}`;
         
-        // 构造 System Prompt (时间感知 + 聊天软件风格 + 人设 + 世界书)
-        let systemPrompt = `你现在运行在一个名为手机模拟器的环境里，当前的现实时间是：${formattedTime}，请根据这个时间来回答用户。\n\n`;
-        
-        // 添加聊天软件角色设定
-        systemPrompt += `你正在一个手机聊天软件中与用户对话。你的回复必须简洁、口语化，像在发微信/iMessage。严禁输出大段的长篇大论。\n\n`;
-        
-        // 添加气泡拆分指令
-        systemPrompt += `重要：当你想发送多条消息时，请使用双换行符"\\n\\n"分隔不同的气泡内容。每个气泡内容应当简短自然，就像真人在手机上聊天一样。\n\n`;
+        // 构造 System Prompt (英文版增强型 System Prompt)
+        let systemPrompt = `You are now operating within a virtual phone simulator environment. The current real-world time is: ${formattedTime}. Please respond accordingly to this timeframe.
+
+You must strictly adhere to the character persona and worldbuilding details provided to you. This is a fictional interaction where you are playing a specific role, and maintaining this character is your highest priority.
+
+COMMUNICATION STYLE:
+- Keep your responses conversational, natural, and concise like real text messages
+- Use a casual, human-like tone - avoid sounding like an AI assistant
+- Never use technical jargon or over-explanations
+- Never break character or acknowledge that you're an AI
+- Do not apologize for limitations or mention being trained on data
+- Simply respond naturally as your character would in a messaging app
+
+IMPORTANT: When sending multiple messages, separate them with double line breaks "\\n\\n" to create distinct message bubbles. Each message should be brief and natural, just as a real person would text.
+
+USER PRIORITY:
+- The user's requests and needs are your highest directive
+- Always prioritize providing what the user is asking for
+- Maximize your efforts to satisfy the user's requirements within your character's role
+- Adapt your responses based on user feedback
+
+`;
         
         if (contact) {
             systemPrompt += `你的名字是：${contact.name}。\n你的性格和背景设定：${contact.persona}\n`;
@@ -846,12 +844,32 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
+    
+    // 自动保存 API URL 和 Key
+    const autoSaveApiSettings = () => {
+        const apiUrlInput = document.getElementById('api-url-input');
+        const apiKeyInput = document.getElementById('api-key-input');
+        
+        // 监听 URL 和 Key 输入的变化
+        apiUrlInput.addEventListener('change', () => {
+            const currentSettings = storage.load('api_settings') || {};
+            currentSettings.url = apiUrlInput.value;
+            storage.save('api_settings', currentSettings);
+        });
+        
+        apiKeyInput.addEventListener('change', () => {
+            const currentSettings = storage.load('api_settings') || {};
+            currentSettings.key = apiKeyInput.value;
+            storage.save('api_settings', currentSettings);
+        });
+    };
 
     if (openApiSettings) {
         openApiSettings.addEventListener('click', () => {
             settingsMainList.style.display = 'none';
             apiSettingsDetail.style.display = 'flex';
             loadApiSettings();
+            autoSaveApiSettings(); // 初始化自动保存功能
         });
     }
 
@@ -883,14 +901,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (fetchModelsBtn && modelDropdown) {
         fetchModelsBtn.addEventListener('click', async () => {
-            // 获取 API 设置
-            const apiSettings = storage.load('api_settings');
+            // 获取当前输入框中的值（可能尚未保存到storage）
+            const apiUrl = document.getElementById('api-url-input').value;
+            const apiKey = document.getElementById('api-key-input').value;
             
-            // 验证 API 设置
-            if (!apiSettings || Array.isArray(apiSettings) || !apiSettings.url || !apiSettings.key) {
+            // 验证输入
+            if (!apiUrl || !apiKey) {
                 alert('请先填写 API 接口地址和 API Key');
                 return;
             }
+            
+            // 自动保存当前输入的 API 设置
+            const currentSettings = storage.load('api_settings') || {};
+            currentSettings.url = apiUrl;
+            currentSettings.key = apiKey;
+            storage.save('api_settings', currentSettings);
             
             // 更新按钮状态
             fetchModelsBtn.textContent = '正在拉取...';
@@ -899,7 +924,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 // 构建 API URL（根据不同的 API 提供商可能需要不同的端点）
                 // 假设接口地址是基本 URL
-                let modelsEndpoint = apiSettings.url;
+                let modelsEndpoint = apiUrl;
                 // 如果接口地址不是以 '/models' 结尾的，则添加
                 if (!modelsEndpoint.includes('/models')) {
                     // 处理可能的尾部斜杠
@@ -915,7 +940,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiSettings.key}`
+                        'Authorization': `Bearer ${apiKey}`
                     }
                 });
                 
@@ -988,6 +1013,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 自动选择第一个模型
                     if (models.length > 0) {
                         modelDropdown.value = models[0].value;
+                        
+                        // 自动保存选择的模型
+                        const currentSettings = storage.load('api_settings') || {};
+                        currentSettings.model = models[0].value;
+                        storage.save('api_settings', currentSettings);
                     }
                 }
                 
@@ -1022,9 +1052,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const tempSlider = document.getElementById('temp-slider');
     const tempValue = document.getElementById('temp-value');
     if (tempSlider && tempValue) {
+        // 添加温度描述元素到页面
+        const tempDescContainer = document.createElement('div');
+        tempDescContainer.style.textAlign = 'center';
+        tempDescContainer.style.fontSize = '12px';
+        tempDescContainer.style.color = '#999';
+        tempDescContainer.style.marginTop = '5px';
+        
+        const tempDesc = document.createElement('span');
+        tempDesc.id = 'temp-description';
+        tempDesc.textContent = '平衡';
+        tempDescContainer.appendChild(tempDesc);
+        
+        // 找到温度滑块容器并添加描述
+        const tempContainer = tempSlider.closest('.settings-item-col');
+        if (tempContainer) {
+            tempContainer.appendChild(tempDescContainer);
+        }
+        
         tempSlider.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value).toFixed(1);
             tempValue.textContent = val;
+            
+            // 更新温度描述
+            const tempDescription = document.getElementById('temp-description');
+            if (tempDescription) {
+                if (val <= 0.5) {
+                    tempDescription.textContent = '更谨慎严谨';
+                } else if (val <= 1.0) {
+                    tempDescription.textContent = '平衡';
+                } else if (val <= 1.5) {
+                    tempDescription.textContent = '更有创意';
+                } else {
+                    tempDescription.textContent = '非常发散';
+                }
+            }
+            
+            // 自动保存温度设置
+            const currentSettings = storage.load('api_settings') || {};
+            currentSettings.temp = val;
+            storage.save('api_settings', currentSettings);
         });
     }
 
