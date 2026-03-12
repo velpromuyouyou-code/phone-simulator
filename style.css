@@ -254,27 +254,19 @@ body {
     will-change: transform;
 }
 
-/* 消息应用顶部栏 - 调整内边距适配iPhone 15 Pro Max 动态岛 */
+/* 消息应用顶部栏 - 调整内边距适配全屏显示 */
 .app-header {
-    padding: 40px 30px 20px; /* 顶部内边距减少，允许内容延伸到动态岛区域 */
+    padding: 10px 30px 20px; /* 减少顶部内边距 */
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #222;
     position: relative;
-    margin-top: 35px; /* 给动态岛留出空间 */
 }
 
-/* 为应用头部添加动态岛占位区域 */
+/* 移除动态岛占位区域 */
 .app-header::before {
-    content: "";
-    position: absolute;
-    top: -35px; /* 与margin-top对应 */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 130px;
-    height: 35px;
-    pointer-events: none;
+    display: none;
 }
 
 .app-header .title {
@@ -834,25 +826,17 @@ body {
 }
 
 .modal-header {
-    padding: 40px 20px 15px; /* 减少顶部内边距以匹配app-header */
+    padding: 10px 20px 15px; /* 减少顶部内边距 */
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #222;
     position: relative;
-    margin-top: 35px; /* 给动态岛留出空间 */
 }
 
-/* 为模态框头部添加动态岛占位区域 */
+/* 移除动态岛占位区域 */
 .modal-header::before {
-    content: "";
-    position: absolute;
-    top: -35px; /* 与margin-top对应 */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 130px;
-    height: 35px;
-    pointer-events: none;
+    display: none;
 }
 
 .modal-title {
@@ -915,7 +899,7 @@ body {
 
 .chat-detail-header {
     background: transparent !important;
-    padding: 40px 15px 15px; /* 减少顶部内边距 */
+    padding: 10px 15px 15px; /* 减少顶部内边距 */
     border-bottom: none;
     display: flex;
     justify-content: space-between;
@@ -927,19 +911,11 @@ body {
     width: 100%;
     z-index: 200;
     pointer-events: none;
-    margin-top: 35px; /* 给动态岛留出空间 */
 }
 
-/* 为聊天详情头部添加动态岛占位区域 */
+/* 移除动态岛占位区域 */
 .chat-detail-header::before {
-    content: "";
-    position: absolute;
-    top: -35px; /* 与margin-top对应 */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 130px;
-    height: 35px;
-    pointer-events: none;
+    display: none;
 }
 
 .chat-detail-header > * {
@@ -1067,7 +1043,7 @@ body {
     --bubble-opacity: 0.8;
 }
 
-/* 更新的气泡样式 - 增加高透边缘光泽感和毛玻璃效果 */
+/* 增强的气泡样式 - 高透边缘、光泽感和毛玻璃效果 */
 .message-bubble {
     max-width: 80%;
     padding: 12px 16px;
@@ -1079,8 +1055,11 @@ body {
     color: #f5f5f5;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     overflow: hidden;
+    /* 使用伪元素创建多层效果 */
+    isolation: isolate;
 }
 
+/* 毛玻璃主体层 */
 .message-bubble::before {
     content: '';
     position: absolute;
@@ -1088,68 +1067,71 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.1);
+    border-radius: inherit;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-radius: inherit;
     z-index: -1;
+    opacity: 0.9;
 }
 
-/* 边缘发光效果 */
+/* 光泽边缘效果 */
 .message-bubble::after {
     content: '';
     position: absolute;
-    top: -1px;
-    left: -1px;
-    right: -1px;
-    bottom: -1px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: linear-gradient(135deg, 
-                rgba(255, 255, 255, 0.5) 0%, 
-                rgba(255, 255, 255, 0.2) 50%, 
+                rgba(255, 255, 255, 0.4) 0%, 
+                rgba(255, 255, 255, 0.1) 50%, 
                 rgba(255, 255, 255, 0) 100%);
     border-radius: inherit;
-    z-index: -2;
+    z-index: 1;
+    opacity: 0.7;
+    pointer-events: none;
 }
 
 .message-bubble.received {
     align-self: flex-start;
     border-bottom-left-radius: 8px;
-    background: rgba(42, 42, 42, var(--bubble-opacity));
+    background-color: rgba(44, 44, 46, var(--bubble-opacity));
 }
 
 .message-bubble.received::before {
-    background: rgba(42, 42, 42, var(--bubble-opacity));
+    background-color: rgba(44, 44, 46, var(--bubble-opacity));
 }
 
 .message-bubble.sent {
     align-self: flex-end;
     border-bottom-right-radius: 8px;
-    background: rgba(0, 122, 255, var(--bubble-opacity));
+    background-color: rgba(10, 132, 255, var(--bubble-opacity));
 }
 
 .message-bubble.sent::before {
-    background: rgba(0, 122, 255, var(--bubble-opacity));
+    background-color: rgba(10, 132, 255, var(--bubble-opacity));
 }
 
-/* 气泡内部光泽渐变 */
+/* 气泡内部文本 */
 .message-bubble .message-text {
     position: relative;
     z-index: 2;
 }
 
-/* 气泡顶部光泽效果 */
-.message-bubble .message-text::before {
+/* 顶部内部光泽效果 */
+.message-text::before {
     content: '';
     position: absolute;
     top: -12px;
     left: -16px;
     right: -16px;
-    height: 30px;
+    height: 24px;
     background: linear-gradient(to bottom, 
-                rgba(255, 255, 255, 0.25) 0%, 
+                rgba(255, 255, 255, 0.3) 0%, 
                 rgba(255, 255, 255, 0) 100%);
     z-index: -1;
-    border-radius: inherit;
+    border-radius: 20px 20px 0 0;
+    opacity: 0.6;
 }
 
 .message-time {

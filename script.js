@@ -235,6 +235,124 @@ document.addEventListener('DOMContentLoaded', () => {
     const opacitySlider = document.getElementById('opacity-slider');
     const opacityValue = document.getElementById('opacity-value');
 
+    // 保存或更新聊天记录
+    const saveChatHistory = (contactId, contactName, avatarHtml, messageText, isAI = false) => {
+        // 获取现有的聊天历史记录
+        const chatHistories = storage.load('chat_histories') || [];
+        
+        // 查找是否已有该联系人的聊天记录
+        const now = new Date();
+        const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        const existingChatIndex = chatHistories.findIndex(chat => chat.contactId == contactId);
+        
+        if (existingChatIndex !== -1) {
+            // 更新现有记录
+            chatHistories[existingChatIndex] = {
+                ...chatHistories[existingChatIndex],
+                lastMessage: messageText,
+                lastTime: time,
+                timestamp: now.getTime(),
+                lastMessageFromAI: isAI
+            };
+        } else {
+            // 创建新记录
+            chatHistories.push({
+                contactId: contactId,
+                contactName: contactName,
+                avatarHtml: avatarHtml,
+                lastMessage: messageText,
+                lastTime: time,
+                timestamp: now.getTime(),
+                lastMessageFromAI: isAI
+            });
+        }
+        
+        // 按最新消息时间排序
+        chatHistories.sort((a, b) => b.timestamp - a.timestamp);
+        
+        // 保存更新后的记录
+        storage.save('chat_histories', chatHistories);
+        
+        // 刷新聊天列表
+        renderChatHistories();
+    };
+    
+    // 渲染聊天记录列表
+    const renderChatHistories = () => {
+        const chatsContent = document.getElementById('chats-content');
+        if (!chatsContent) return;
+        
+        const chatHistories = storage.load('chat_histories') || [];
+        
+        if (chatHistories.length === 0) {
+            chatsContent.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">暂无聊天记录</div>';
+            return;
+        }
+        
+        let html = '';
+        
+        chatHistories.forEach(chat => {
+            html += `
+                <div class="chat-item" data-id="${chat.contactId}">
+                    <div class="chat-avatar">${chat.avatarHtml}</div>
+                    <div class="chat-info">
+                        <div class="chat-name">${chat.contactName}</div>
+                        <div class="chat-last-msg">${chat.lastMessageFromAI ? '对方: ' : '我: '}${chat.lastMessage}</div>
+                    </div>
+                    <div style="font-size: 12px; color: #888;">${chat.lastTime}</div>
+                </div>
+            `;
+        });
+        
+        chatsContent.innerHTML = html;
+        
+        // 为聊天记录项添加点击事件
+        const chatItems = chatsContent.querySelectorAll('.chat-item');
+        chatItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const id = item.getAttribute('data-id');
+                const contact = storage.load('contacts').find(c => c.id == id);
+                
+                if (contact) {
+                    chatDetailName.textContent = contact.name;
+                    
+                    // 显示联系人头像（如果有）
+                    if (contact.avatar) {
+                        chatDetailAvatar.innerHTML = `<img src="${contact.avatar}" alt="${contact.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                    } else {
+                        chatDetailAvatar.innerHTML = '<i class="fa-solid fa-user"></i>';
+                    }
+                    
+                    chatDetail.setAttribute('data-current-char-id', contact.id);
+                    
+                    // 应用聊天背景
+                    if (contact.chatBg) {
+                        chatDetail.style.backgroundImage = `url(${contact.chatBg})`;
+                        chatMessages.style.backgroundImage = `url(${contact.chatBg})`;
+                    } else {
+                        // 使用纯黑色背景
+                        chatDetail.style.backgroundImage = 'none';
+                        chatDetail.style.backgroundColor = '#000';
+                        chatMessages.style.backgroundImage = 'none';
+                        chatMessages.style.backgroundColor = 'transparent';
+                    }
+                    
+                    // 应用透明度设置
+                    if (contact.bubbleOpacity) {
+                        document.documentElement.style.setProperty('--bubble-opacity', contact.bubbleOpacity);
+                    } else {
+                        document.documentElement.style.setProperty('--bubble-opacity', '0.8'); // 默认值
+                    }
+                    
+                    chatDetail.classList.add('active');
+                }
+            });
+        });
+    };
+
+    // 初始化渲染聊天记录
+    renderChatHistories();
+
     // 获取 AI 回复的函数
     const fetchAIResponse = async (userText) => {
         const charId = chatDetail.getAttribute('data-current-char-id');
@@ -394,6 +512,25 @@ USER PRIORITY:
                     // 添加500-800ms的随机延迟，模拟真实打字速度
                     const delay = Math.floor(Math.random() * 300) + 500;
                     setTimeout(() => showNextBubble(index + 1), delay);
+                    
+                    // 只有第一条消息用于更新聊天历史
+                    if (index === 0) {
+                        // 保存AI回复到聊天记录
+                        const charId = chatDetail.getAttribute('data-current-char-id');
+                        if (charId) {
+                            const contacts = storage.load('contacts');
+                            const contact = contacts.find(c => c.id == charId);
+                            if (contact) {
+                                let avatarHtml = '';
+                                if (contact.avatar) {
+                                    avatarHtml = `<img src="${contact.avatar}" alt="${contact.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                                } else {
+                                    avatarHtml = '<i class="fa-solid fa-user"></i>';
+                                }
+                                saveChatHistory(charId, contact.name, avatarHtml, finalParts[0], true);
+                            }
+                        }
+                    }
                 };
                 
                 // 开始显示第一个气泡
@@ -438,6 +575,23 @@ USER PRIORITY:
                     behavior: 'smooth'
                 });
             });
+            
+            // 保存聊天记录
+            const charId = chatDetail.getAttribute('data-current-char-id');
+            if (charId) {
+                const contacts = storage.load('contacts');
+                const contact = contacts.find(c => c.id == charId);
+                if (contact) {
+                    let avatarHtml = '';
+                    if (contact.avatar) {
+                        avatarHtml = `<img src="${contact.avatar}" alt="${contact.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                    } else {
+                        avatarHtml = '<i class="fa-solid fa-user"></i>';
+                    }
+                    
+                    saveChatHistory(charId, contact.name, avatarHtml, text);
+                }
+            }
 
             // 触发 AI 回复
             fetchAIResponse(text);
@@ -454,12 +608,53 @@ USER PRIORITY:
         }, 400);
     };
 
-    // 监听回车键发送消息
+    // 监听回车键发送消息但不触发AI回复
     if (chatInputField) {
         chatInputField.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault(); // 阻止默认的回车换行
-                sendMessage();
+                
+                // 只发送用户消息到界面，不触发AI回复
+                const text = chatInputField.textContent.trim();
+                if (text) {
+                    const now = new Date();
+                    const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                    
+                    const messageHtml = `
+                        <div class="message-bubble sent message-slide-in">
+                            <div class="message-text">${text}</div>
+                            <div class="message-time">${time} <i class="fa-solid fa-check-double"></i></div>
+                        </div>
+                    `;
+                    
+                    chatMessages.insertAdjacentHTML('beforeend', messageHtml);
+                    
+                    // 保存聊天记录
+                    const charId = chatDetail.getAttribute('data-current-char-id');
+                    if (charId) {
+                        const contacts = storage.load('contacts');
+                        const contact = contacts.find(c => c.id == charId);
+                        if (contact) {
+                            let avatarHtml = '';
+                            if (contact.avatar) {
+                                avatarHtml = `<img src="${contact.avatar}" alt="${contact.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                            } else {
+                                avatarHtml = '<i class="fa-solid fa-user"></i>';
+                            }
+                            
+                            saveChatHistory(charId, contact.name, avatarHtml, text);
+                        }
+                    }
+                    
+                    chatInputField.textContent = '';
+                    
+                    requestAnimationFrame(() => {
+                        chatMessages.scrollTo({
+                            top: chatMessages.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    });
+                }
             }
         });
 
@@ -485,17 +680,6 @@ USER PRIORITY:
                 applyBounce(btn);
             });
         }
-    });
-
-    chatItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const name = item.querySelector('.chat-name').textContent;
-            const avatarHtml = item.querySelector('.chat-avatar').innerHTML;
-            
-            chatDetailName.textContent = name;
-            chatDetailAvatar.innerHTML = avatarHtml;
-            chatDetail.classList.add('active');
-        });
     });
 
     // 聊天工具菜单切换 (新的弹出菜单逻辑)
