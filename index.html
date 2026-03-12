@@ -39,63 +39,12 @@
                 </div>
                     <!-- 对话列表内容 -->
                     <div class="app-content" id="chats-content">
-                        <div class="chat-item">
-                            <div class="chat-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div class="chat-info">
-                                <div class="chat-name">张三</div>
-                                <div class="chat-last-msg">好的，明天见！</div>
-                            </div>
-                        </div>
-                        <div class="chat-item">
-                            <div class="chat-avatar"><i class="fa-solid fa-user-group"></i></div>
-                            <div class="chat-info">
-                                <div class="chat-name">开发小组</div>
-                                <div class="chat-last-msg">Cline: 任务已完成。</div>
-                            </div>
-                        </div>
-                        <div class="chat-item">
-                            <div class="chat-avatar"><i class="fa-solid fa-robot"></i></div>
-                            <div class="chat-info">
-                                <div class="chat-name">AI 助手</div>
-                                <div class="chat-last-msg">有什么我可以帮您的吗？</div>
-                            </div>
-                        </div>
+                        <!-- 聊天列表将由JS动态填充 -->
                     </div>
 
                     <!-- 通讯录内容 -->
                     <div class="app-content" id="contacts-content" style="display: none;">
-                        <div class="contact-group">A</div>
-                        <div class="chat-item">
-                            <div class="chat-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div class="chat-info">
-                                <div class="chat-name">阿强</div>
-                            </div>
-                            <div class="contact-edit"><i class="fa-solid fa-ellipsis-vertical"></i></div>
-                        </div>
-                        <div class="contact-group">L</div>
-                        <div class="chat-item">
-                            <div class="chat-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div class="chat-info">
-                                <div class="chat-name">李华</div>
-                            </div>
-                            <div class="contact-edit"><i class="fa-solid fa-ellipsis-vertical"></i></div>
-                        </div>
-                        <div class="contact-group">W</div>
-                        <div class="chat-item">
-                            <div class="chat-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div class="chat-info">
-                                <div class="chat-name">王五</div>
-                            </div>
-                            <div class="contact-edit"><i class="fa-solid fa-ellipsis-vertical"></i></div>
-                        </div>
-                        <div class="contact-group">Z</div>
-                        <div class="chat-item">
-                            <div class="chat-avatar"><i class="fa-solid fa-user"></i></div>
-                            <div class="chat-info">
-                                <div class="chat-name">张三</div>
-                            </div>
-                            <div class="contact-edit"><i class="fa-solid fa-ellipsis-vertical"></i></div>
-                        </div>
+                        <!-- 联系人列表将由JS动态填充 -->
                     </div>
 
                     <!-- 状态 (朋友圈) 内容 -->
@@ -109,48 +58,7 @@
                             </div>
                         </div>
                         <div class="moments-posts">
-                            <div class="post-item">
-                                <div class="post-header">
-                                    <div class="post-avatar"><i class="fa-solid fa-user"></i></div>
-                                    <div class="post-user-info">
-                                        <span class="post-user-name">张三</span>
-                                        <span class="post-time">1小时前</span>
-                                    </div>
-                                </div>
-                                <div class="post-content">今天天气真不错！</div>
-                                <div class="post-actions">
-                                    <span class="post-action-btn"><i class="fa-regular fa-heart"></i></span>
-                                    <span class="post-action-btn"><i class="fa-regular fa-comment"></i></span>
-                                </div>
-                            </div>
-                            <div class="post-item">
-                                <div class="post-header">
-                                    <div class="post-avatar"><i class="fa-solid fa-user-group"></i></div>
-                                    <div class="post-user-info">
-                                        <span class="post-user-name">开发小组</span>
-                                        <span class="post-time">3小时前</span>
-                                    </div>
-                                </div>
-                                <div class="post-content">新功能上线了，大家快来体验。</div>
-                                <div class="post-actions">
-                                    <span class="post-action-btn"><i class="fa-regular fa-heart"></i></span>
-                                    <span class="post-action-btn"><i class="fa-regular fa-comment"></i></span>
-                                </div>
-                            </div>
-                            <div class="post-item">
-                                <div class="post-header">
-                                    <div class="post-avatar"><i class="fa-solid fa-robot"></i></div>
-                                    <div class="post-user-info">
-                                        <span class="post-user-name">AI 助手</span>
-                                        <span class="post-time">昨天</span>
-                                    </div>
-                                </div>
-                                <div class="post-content">很高兴能为您服务。</div>
-                                <div class="post-actions">
-                                    <span class="post-action-btn"><i class="fa-regular fa-heart"></i></span>
-                                    <span class="post-action-btn"><i class="fa-regular fa-comment"></i></span>
-                                </div>
-                            </div>
+                            <!-- 朋友圈内容将由JS动态填充 -->
                         </div>
                     </div>
 
@@ -193,25 +101,13 @@
                         <div class="app-header chat-detail-header">
                             <div class="back-btn" id="back-to-chats"><i class="fa-solid fa-chevron-left"></i></div>
                             <div class="chat-detail-info">
-                                <div class="chat-detail-name">张三</div>
+                                <div class="chat-detail-name"></div>
                                 <div class="chat-detail-status">在线</div>
                             </div>
                             <div class="chat-detail-avatar" id="open-chat-settings"></div>
                         </div>
                         <div class="app-content chat-messages" id="chat-messages">
-                            <div class="message-date">3月7日</div>
-                            <div class="message-bubble received">
-                                <div class="message-text">你好！最近怎么样？</div>
-                                <div class="message-time">21:45</div>
-                            </div>
-                            <div class="message-bubble sent">
-                                <div class="message-text">挺好的，正在用 Cline 开发模拟器呢。</div>
-                                <div class="message-time">21:46 <i class="fa-solid fa-check-double"></i></div>
-                            </div>
-                            <div class="message-bubble received">
-                                <div class="message-text">太棒了！加油！</div>
-                                <div class="message-time">21:47</div>
-                            </div>
+                            <!-- 聊天消息将由JS动态填充 -->
                         </div>
                         <div class="chat-input-bar">
                             <div style="position: relative;">

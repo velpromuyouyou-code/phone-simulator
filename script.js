@@ -301,7 +301,26 @@ USER PRIORITY:
         chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
 
         try {
-            const response = await fetch(apiSettings.url, {
+            // 确保URL以/v1/chat/completions结尾
+            let apiUrl = apiSettings.url;
+            if (!apiUrl.endsWith('/chat/completions')) {
+                // 如果URL已经包含/v1，但不是以/v1结尾，确保正确拼接
+                if (apiUrl.includes('/v1') && !apiUrl.endsWith('/v1')) {
+                    // URL中包含/v1但不是结尾，如https://api.example.com/v1/something
+                    apiUrl = apiUrl.split('/v1')[0] + '/v1/chat/completions';
+                } 
+                // 如果URL以/v1结尾，直接添加/chat/completions
+                else if (apiUrl.endsWith('/v1')) {
+                    apiUrl += '/chat/completions';
+                } 
+                // 如果URL不包含/v1，添加/v1/chat/completions
+                else if (!apiUrl.includes('/v1')) {
+                    // 处理可能的尾部斜杠
+                    apiUrl = apiUrl.endsWith('/') ? apiUrl + 'v1/chat/completions' : apiUrl + '/v1/chat/completions';
+                }
+            }
+            
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -983,16 +1002,20 @@ USER PRIORITY:
             fetchModelsBtn.disabled = true;
             
             try {
-                // 构建 API URL（根据不同的 API 提供商可能需要不同的端点）
-                // 假设接口地址是基本 URL
-                let modelsEndpoint = apiUrl;
-                // 如果接口地址不是以 '/models' 结尾的，则添加
-                if (!modelsEndpoint.includes('/models')) {
+                // 构建 API URL
+                // 确保URL包含/v1部分
+                let modelsEndpoint;
+                
+                if (apiUrl.includes('/v1')) {
+                    // 从URL中提取/v1前的基础部分
+                    let baseUrl = apiUrl.split('/v1')[0];
+                    modelsEndpoint = baseUrl + '/v1/models';
+                } else {
                     // 处理可能的尾部斜杠
-                    if (modelsEndpoint.endsWith('/')) {
-                        modelsEndpoint += 'models';
+                    if (apiUrl.endsWith('/')) {
+                        modelsEndpoint = apiUrl + 'v1/models';
                     } else {
-                        modelsEndpoint += '/models';
+                        modelsEndpoint = apiUrl + '/v1/models';
                     }
                 }
                 
