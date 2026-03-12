@@ -574,10 +574,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     chatDetail.setAttribute('data-current-char-id', contact.id);
                     
-                    // 应用聊天背景
+                    // 应用聊天背景，并确保正确设置背景属性
                     if (contact.chatBg) {
                         chatDetail.style.backgroundImage = `url(${contact.chatBg})`;
+                        chatDetail.style.backgroundSize = 'cover';
+                        chatDetail.style.backgroundPosition = 'center';
+                        chatDetail.style.backgroundRepeat = 'no-repeat';
+                        
                         chatMessages.style.backgroundImage = `url(${contact.chatBg})`;
+                        chatMessages.style.backgroundSize = 'cover';
+                        chatMessages.style.backgroundPosition = 'center';
+                        chatMessages.style.backgroundRepeat = 'no-repeat';
                     } else {
                         // 使用纯黑色背景
                         chatDetail.style.backgroundImage = 'none';
@@ -1753,6 +1760,7 @@ USER PRIORITY:
                     const chatDetail = document.getElementById('chat-detail');
                     const chatDetailName = chatDetail.querySelector('.chat-detail-name');
                     const chatDetailAvatar = chatDetail.querySelector('.chat-detail-avatar');
+                    const chatMessages = document.getElementById('chat-messages');
                     
                     chatDetailName.textContent = contact.name;
                     
@@ -1765,13 +1773,23 @@ USER PRIORITY:
                     
                     chatDetail.setAttribute('data-current-char-id', contact.id);
                     
-                    // 应用聊天背景
+                    // 应用聊天背景，并确保正确设置背景属性
                     if (contact.chatBg) {
                         chatDetail.style.backgroundImage = `url(${contact.chatBg})`;
+                        chatDetail.style.backgroundSize = 'cover';
+                        chatDetail.style.backgroundPosition = 'center';
+                        chatDetail.style.backgroundRepeat = 'no-repeat';
+                        
+                        chatMessages.style.backgroundImage = `url(${contact.chatBg})`;
+                        chatMessages.style.backgroundSize = 'cover';
+                        chatMessages.style.backgroundPosition = 'center';
+                        chatMessages.style.backgroundRepeat = 'no-repeat';
                     } else {
                         // 使用纯黑色背景
                         chatDetail.style.backgroundImage = 'none';
                         chatDetail.style.backgroundColor = '#000';
+                        chatMessages.style.backgroundImage = 'none';
+                        chatMessages.style.backgroundColor = 'transparent';
                     }
                     
                     // 应用透明度设置
