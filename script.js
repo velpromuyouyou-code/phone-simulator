@@ -600,7 +600,47 @@ USER PRIORITY:
             if (contactIndex !== -1) {
                 // 获取背景图片
                 let chatBg = null;
-                if (currentBgPreview.style.backgroundImage) {
+                
+                // 检查是否有新上传的背景图片
+                if (bgUpload.files && bgUpload.files[0]) {
+                    const file = bgUpload.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = (event) => {
+                        // 保存背景图片数据到localStorage
+                        chatBg = event.target.result;
+                        
+                        // 更新联系人设置
+                        contacts[contactIndex] = {
+                            ...contacts[contactIndex],
+                            chatBg: chatBg,
+                            bubbleOpacity: opacitySlider.value
+                        };
+                        
+                        storage.save('contacts', contacts);
+                        
+                        // 立即应用新背景
+                        if (chatBg) {
+                            chatDetail.style.backgroundImage = `url(${chatBg})`;
+                        } else {
+                            // 恢复默认背景
+                            chatDetail.style.backgroundImage = 'url("https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop")';
+                        }
+                        
+                        // 应用透明度设置
+                        document.documentElement.style.setProperty('--bubble-opacity', opacitySlider.value);
+                        
+                        // 动画效果并关闭设置
+                        applyBounce(saveChatSettings);
+                        chatSettings.classList.remove('active');
+                    };
+                    
+                    // 读取文件为DataURL
+                    reader.readAsDataURL(file);
+                    return; // 中断执行，等待异步完成
+                } 
+                // 如果没有新上传，但有预览图片（可能是之前设置的）
+                else if (currentBgPreview.style.backgroundImage) {
                     // 从 "url('data:image/png;base64,xxx')" 提取实际的数据URL
                     const match = currentBgPreview.style.backgroundImage.match(/url\(['"]?(.*?)['"]?\)/);
                     if (match && match[1]) {

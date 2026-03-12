@@ -12,13 +12,27 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #000; /* 改为黑色背景，避免白边 */
+    background-color: #000; /* 黑色背景避免白边 */
 }
 
 body {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* 动态岛区域 */
+.dynamic-island {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 35px;
+    background: transparent; /* 完全透明 */
+    border-radius: 25px;
+    z-index: 1000;
+    pointer-events: none; /* 允许点击穿透 */
 }
 
 /* 手机容器 - 修改为全屏尺寸 */
@@ -240,13 +254,27 @@ body {
     will-change: transform;
 }
 
-/* 消息应用顶部栏 - 调整内边距适配iPhone 15 Pro Max */
+/* 消息应用顶部栏 - 调整内边距适配iPhone 15 Pro Max 动态岛 */
 .app-header {
-    padding: 50px 30px 20px; /* 减少顶部内边距，解决顶部白边问题 */
+    padding: 40px 30px 20px; /* 顶部内边距减少，允许内容延伸到动态岛区域 */
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #222;
+    position: relative;
+    margin-top: 35px; /* 给动态岛留出空间 */
+}
+
+/* 为应用头部添加动态岛占位区域 */
+.app-header::before {
+    content: "";
+    position: absolute;
+    top: -35px; /* 与margin-top对应 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 35px;
+    pointer-events: none;
 }
 
 .app-header .title {
@@ -806,11 +834,25 @@ body {
 }
 
 .modal-header {
-    padding: 50px 20px 15px; /* 减少顶部内边距以匹配app-header */
+    padding: 40px 20px 15px; /* 减少顶部内边距以匹配app-header */
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #222;
+    position: relative;
+    margin-top: 35px; /* 给动态岛留出空间 */
+}
+
+/* 为模态框头部添加动态岛占位区域 */
+.modal-header::before {
+    content: "";
+    position: absolute;
+    top: -35px; /* 与margin-top对应 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 35px;
+    pointer-events: none;
 }
 
 .modal-title {
@@ -873,7 +915,7 @@ body {
 
 .chat-detail-header {
     background: transparent !important;
-    padding: 50px 15px 15px; /* 减少顶部内边距以匹配app-header */
+    padding: 40px 15px 15px; /* 减少顶部内边距 */
     border-bottom: none;
     display: flex;
     justify-content: space-between;
@@ -884,6 +926,19 @@ body {
     left: 0;
     width: 100%;
     z-index: 200;
+    pointer-events: none;
+    margin-top: 35px; /* 给动态岛留出空间 */
+}
+
+/* 为聊天详情头部添加动态岛占位区域 */
+.chat-detail-header::before {
+    content: "";
+    position: absolute;
+    top: -35px; /* 与margin-top对应 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 35px;
     pointer-events: none;
 }
 
@@ -1009,93 +1064,42 @@ body {
 
 .message-bubble {
     max-width: 80%;
-    padding: 14px 22px;
-    border-radius: 28px; /* 更圆润的泡泡感 */
+    padding: 12px 16px; /* 减小内边距使气泡更扁 */
+    border-radius: 20px; /* 稍微减小圆角 */
     position: relative;
     font-size: 15px;
     line-height: 1.5;
-    backdrop-filter: blur(30px) saturate(250%);
-    -webkit-backdrop-filter: blur(30px) saturate(250%);
-    
-    /* 边缘高透有光泽感的核心设置 - 增强效果 */
-    border: 1.5px solid rgba(255, 255, 255, 0.75); /* 增加边框亮度，更明显的高光边缘 */
-    box-shadow: 
-        inset 0 8px 20px rgba(255, 255, 255, 0.8),  /* 增强顶部内高光，更强烈的球体反光 */
-        inset 0 -8px 12px rgba(0, 0, 0, 0.2),       /* 增强底部内阴影立体感 */
-        0 18px 40px rgba(0, 0, 0, 0.25),            /* 更深邃的外部投影 */
-        0 0 20px rgba(255, 255, 255, 0.2);          /* 整体更明显的发光效果 */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-bottom: 12px;
-    /* 增强毛玻璃质感 */
-    background: rgba(255, 255, 255, 0.12);
-    transform-style: preserve-3d;
-    /* 添加变量以控制气泡透明度 */
-    opacity: var(--bubble-opacity, 0.8);
+    margin-bottom: 10px;
+    background: #222; /* 默认灰色背景 */
+    color: #f0f0f0; /* 不那么刺眼的白色文字 */
+    border: none; /* 去掉边框 */
+    box-shadow: none; /* 去掉阴影效果 */
+    transform-style: flat; /* 移除3D效果 */
 }
 
 .message-bubble.received {
     align-self: flex-start;
-    /* 增强的浅色毛玻璃质感 */
-    background: linear-gradient(145deg, 
-        rgba(255, 255, 255, 0.5) 0%, 
-        rgba(255, 255, 255, 0.25) 40%,
-        rgba(255, 255, 255, 0.12) 100%);
-    color: #fff;
-    border-bottom-left-radius: 10px;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    /* 提高边缘透明度 */
-    border: 1.5px solid rgba(255, 255, 255, 0.8);
+    background: #2a2a2a; /* 深灰色，但不是纯黑 */
+    color: #f0f0f0; /* 不那么刺眼的白色 */
+    border-bottom-left-radius: 8px;
+    text-shadow: none; /* 移除文字阴影 */
 }
 
 .message-bubble.sent {
     align-self: flex-end;
-    /* 增强的蓝色水润泡泡质感 */
-    background: linear-gradient(145deg, 
-        rgba(0, 122, 255, 0.7) 0%, 
-        rgba(0, 122, 255, 0.5) 40%,
-        rgba(0, 122, 255, 0.25) 100%);
-    color: #fff;
-    border-bottom-right-radius: 10px;
-    border: 1.5px solid rgba(255, 255, 255, 0.85); /* 更亮的边框 */
-    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    /* 为发送的消息增加额外的光泽 */
-    box-shadow: 
-        inset 0 10px 25px rgba(255, 255, 255, 0.9),
-        inset 0 -10px 15px rgba(0, 0, 0, 0.25),
-        0 20px 45px rgba(0, 0, 0, 0.3),
-        0 0 25px rgba(0, 122, 255, 0.2);
+    background: #007AFF; /* 苹果蓝色 */
+    color: #fff; /* 纯白色文字 */
+    border-top-right-radius: 8px; /* 右上角圆角减小 */
+    border-bottom-right-radius: 20px; /* 右下角圆角增大 */
+    text-shadow: none; /* 移除文字阴影 */
+    border: none; /* 移除边框 */
+    box-shadow: none; /* 移除阴影效果 */
 }
 
-/* 泡泡表面的额外光泽层 - 增强效果 */
-.message-bubble::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 5%;
-    right: 5%;
-    height: 60%;
-    background: linear-gradient(to bottom, 
-        rgba(255,255,255,0.9) 0%, /* 更亮的顶部高光 */
-        rgba(255,255,255,0.6) 30%,
-        rgba(255,255,255,0.2) 60%,
-        transparent 100%);
-    border-radius: 50% / 100% 100% 0 0;
-    pointer-events: none;
-    opacity: 0.8;
-}
-
-/* 添加底部微弱反光效果，增强泡泡质感 */
+/* 移除泡泡表面的额外光泽层和反光效果 */
+.message-bubble::before,
 .message-bubble::after {
-    content: '';
-    position: absolute;
-    bottom: 4px;
-    left: 15%;
-    right: 15%;
-    height: 20%;
-    background: linear-gradient(to top, rgba(255,255,255,0.25), transparent);
-    border-radius: 50% / 0 0 100% 100%;
-    pointer-events: none;
-    opacity: 0.85;
+    display: none;
 }
 
 .message-text {
