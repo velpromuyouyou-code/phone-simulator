@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const messagesApp = document.getElementById('messages-app');
     const settingsApp = document.getElementById('settings-app');
     const worldbookApp = document.getElementById('worldbook-app');
+    const appearanceApp = document.getElementById('appearance-app');
     
     appItems.forEach(app => {
         app.addEventListener('click', () => {
@@ -22,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 settingsApp.classList.add('active');
             } else if (appName === '世界书') {
                 worldbookApp.classList.add('active');
+            } else if (appName === '外观') {
+                appearanceApp.classList.add('active');
+                loadAppearanceSettings(); // 加载外观设置
             } else if (appName) {
                 alert(`正在打开应用：${appName}`);
             }
@@ -31,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 返回桌面逻辑
     const backToHome = document.getElementById('back-to-home');
     const backToHomeWorldbook = document.getElementById('back-to-home-worldbook');
+    const backToHomeAppearance = document.getElementById('back-to-home-appearance');
 
     const closeActiveApp = () => {
         const activeApp = document.querySelector('.app-overlay.active');
@@ -49,6 +54,250 @@ document.addEventListener('DOMContentLoaded', () => {
     if (backToHomeWorldbook) {
         backToHomeWorldbook.addEventListener('click', closeActiveApp);
     }
+    
+    if (backToHomeAppearance) {
+        backToHomeAppearance.addEventListener('click', closeActiveApp);
+    }
+    
+    // 外观设置应用逻辑
+    const saveAppearanceBtn = document.getElementById('save-appearance-settings');
+    const wallpaperPreview = document.getElementById('wallpaper-preview');
+    const wallpaperUpload = document.getElementById('wallpaper-upload');
+    const resetWallpaperBtn = document.getElementById('reset-wallpaper-btn');
+    let tempWallpaperDataUrl = null;
+    
+    // 加载外观设置
+    const loadAppearanceSettings = () => {
+        // 加载壁纸设置
+        const appearanceSettings = storage.load('appearance_settings') || {};
+        
+        if (appearanceSettings.wallpaper) {
+            wallpaperPreview.style.backgroundImage = `url(${appearanceSettings.wallpaper})`;
+            wallpaperPreview.innerHTML = '';
+        } else {
+            wallpaperPreview.style.backgroundImage = '';
+            wallpaperPreview.innerHTML = `
+                <i class="fa-solid fa-image" style="font-size: 24px; color: #555;"></i>
+                <span style="margin-top: 8px; color: #888; font-size: 14px;">点击更换壁纸</span>
+            `;
+        }
+        
+        // 加载应用图标设置
+        const appIcons = appearanceSettings.appIcons || {};
+        
+        // 遍历所有应用图标并应用自定义图标
+        for (const appName in appIcons) {
+            const iconDataUrl = appIcons[appName];
+            if (iconDataUrl) {
+                // 找到所有相应的应用图标并应用
+                applyAppIcon(appName, iconDataUrl);
+            }
+        }
+    };
+    
+    // 应用图标到所有相同类型的应用图标
+    const applyAppIcon = (appName, iconDataUrl) => {
+        // 更新外观应用中的预览
+        const previewElement = document.querySelector(`.app-icon-preview.icon-${appName}`);
+        if (previewElement) {
+            // 检查是否已经有图片元素
+            let imgElement = previewElement.querySelector('img');
+            
+            if (!imgElement) {
+                // 如果没有，创建新的
+                imgElement = document.createElement('img');
+                previewElement.innerHTML = '';
+                previewElement.appendChild(imgElement);
+            }
+            
+            imgElement.src = iconDataUrl;
+        }
+        
+        // 更新桌面上的应用图标
+        const desktopIcons = document.querySelectorAll(`.app-icon.icon-${appName}`);
+        desktopIcons.forEach(icon => {
+            // 检查是否已经有图片元素
+            let imgElement = icon.querySelector('img');
+            
+            if (!imgElement) {
+                imgElement = document.createElement('img');
+                icon.innerHTML = '';
+                icon.appendChild(imgElement);
+            }
+            
+            imgElement.src = iconDataUrl;
+        });
+    };
+    
+    // 壁纸点击触发上传
+    if (wallpaperPreview && wallpaperUpload) {
+        wallpaperPreview.addEventListener('click', () => {
+            wallpaperUpload.click();
+        });
+        
+        // 壁纸文件选择后预览
+        wallpaperUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                alert('请选择图片文件');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                // 保存图片数据到临时变量
+                tempWallpaperDataUrl = event.target.result;
+                
+                // 预览壁纸
+                wallpaperPreview.style.backgroundImage = `url(${tempWallpaperDataUrl})`;
+                wallpaperPreview.innerHTML = '';
+                
+                // 应用弹动动画效果
+                wallpaperPreview.classList.remove('bubble-bounce');
+                void wallpaperPreview.offsetWidth; // 触发重绘
+                wallpaperPreview.classList.add('bubble-bounce');
+                setTimeout(() => {
+                    wallpaperPreview.classList.remove('bubble-bounce');
+                }, 400);
+                
+                // 立即应用壁纸预览
+                document.querySelector('.screen').style.backgroundImage = `url(${tempWallpaperDataUrl})`;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    // 恢复默认壁纸按钮
+    if (resetWallpaperBtn) {
+        resetWallpaperBtn.addEventListener('click', () => {
+            // 重置预览区域
+            wallpaperPreview.style.backgroundImage = '';
+            wallpaperPreview.innerHTML = `
+                <i class="fa-solid fa-image" style="font-size: 24px; color: #555;"></i>
+                <span style="margin-top: 8px; color: #888; font-size: 14px;">点击更换壁纸</span>
+            `;
+            wallpaperUpload.value = null; // 清空文件选择
+            tempWallpaperDataUrl = null; // 清除临时壁纸变量
+            
+            // 恢复默认壁纸
+            const defaultWallpaper = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop';
+            document.querySelector('.screen').style.backgroundImage = `url(${defaultWallpaper})`;
+            
+            // 应用动画效果
+            resetWallpaperBtn.classList.remove('bubble-bounce');
+            void resetWallpaperBtn.offsetWidth;
+            resetWallpaperBtn.classList.add('bubble-bounce');
+        });
+    }
+    
+    // 设置应用图标编辑功能
+    const appIconEdits = document.querySelectorAll('.app-icon-edit');
+    
+    appIconEdits.forEach(edit => {
+        const appName = edit.getAttribute('data-app');
+        const uploadInput = document.getElementById(`icon-upload-${appName}`);
+        
+        edit.addEventListener('click', () => {
+            if (uploadInput) {
+                uploadInput.click();
+            }
+        });
+        
+        if (uploadInput) {
+            uploadInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                if (!file.type.startsWith('image/')) {
+                    alert('请选择图片文件');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const iconDataUrl = event.target.result;
+                    
+                    // 立即应用图标到预览
+                    applyAppIcon(appName, iconDataUrl);
+                    
+                    // 应用动画效果
+                    const iconItem = edit.closest('.app-icon-item');
+                    if (iconItem) {
+                        iconItem.classList.remove('bubble-bounce');
+                        void iconItem.offsetWidth;
+                        iconItem.classList.add('bubble-bounce');
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+    
+    // 保存外观设置
+    if (saveAppearanceBtn) {
+        saveAppearanceBtn.addEventListener('click', () => {
+            // 构建设置对象
+            const appearanceSettings = storage.load('appearance_settings') || {};
+            
+            // 更新壁纸
+            if (tempWallpaperDataUrl) {
+                appearanceSettings.wallpaper = tempWallpaperDataUrl;
+            } else if (wallpaperPreview.style.backgroundImage) {
+                // 从预览图片中获取背景URL
+                const match = wallpaperPreview.style.backgroundImage.match(/url\(['"]?(.*?)['"]?\)/);
+                if (match && match[1]) {
+                    appearanceSettings.wallpaper = match[1];
+                }
+            }
+            
+            // 收集应用图标设置
+            appearanceSettings.appIcons = appearanceSettings.appIcons || {};
+            
+            appIconEdits.forEach(edit => {
+                const appName = edit.getAttribute('data-app');
+                const previewElement = document.querySelector(`.app-icon-preview.icon-${appName}`);
+                
+                if (previewElement) {
+                    const imgElement = previewElement.querySelector('img');
+                    if (imgElement && imgElement.src) {
+                        appearanceSettings.appIcons[appName] = imgElement.src;
+                    }
+                }
+            });
+            
+            // 保存设置到localStorage
+            storage.save('appearance_settings', appearanceSettings);
+            
+            // 显示成功动画
+            saveAppearanceBtn.classList.remove('bubble-bounce');
+            void saveAppearanceBtn.offsetWidth;
+            saveAppearanceBtn.classList.add('bubble-bounce');
+            
+            // 可选：显示短暂的成功消息
+            const originalText = saveAppearanceBtn.textContent;
+            saveAppearanceBtn.textContent = '已保存';
+            setTimeout(() => {
+                saveAppearanceBtn.textContent = originalText;
+            }, 1500);
+        });
+    }
+    
+    // 初始化加载外观设置
+    document.addEventListener('DOMContentLoaded', () => {
+        // 加载保存的壁纸
+        const appearanceSettings = storage.load('appearance_settings') || {};
+        if (appearanceSettings.wallpaper) {
+            document.querySelector('.screen').style.backgroundImage = `url(${appearanceSettings.wallpaper})`;
+        }
+        
+        // 加载保存的应用图标
+        const appIcons = appearanceSettings.appIcons || {};
+        for (const appName in appIcons) {
+            applyAppIcon(appName, appIcons[appName]);
+        }
+    });
 
     // 世界书应用逻辑
     const addWorldbookBtn = document.getElementById('add-worldbook-btn');

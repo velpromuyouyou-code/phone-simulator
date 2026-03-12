@@ -410,6 +410,111 @@
                     </div>
                 </div>
 
+                <!-- 外观应用界面 -->
+                <div class="app-overlay" id="appearance-app" style="background-color: #000;">
+                    <div class="app-header">
+                        <div class="back-btn" id="back-to-home-appearance" style="visibility: hidden;"><i class="fa-solid fa-chevron-left"></i> 返回</div>
+                        <div class="title">外观设置</div>
+                        <div class="action-icon" id="save-appearance-settings" style="font-size: 17px; font-weight: 600;">保存</div>
+                    </div>
+                    <div class="app-content" style="padding: 15px;">
+                        <!-- 壁纸设置 -->
+                        <div class="settings-group">
+                            <div class="settings-item-col">
+                                <div class="settings-item-title">主屏幕壁纸</div>
+                                <div class="bg-preview-container">
+                                    <div class="bg-preview" id="wallpaper-preview">
+                                        <i class="fa-solid fa-image" style="font-size: 24px; color: #555;"></i>
+                                        <span style="margin-top: 8px; color: #888; font-size: 14px;">点击更换壁纸</span>
+                                        <input type="file" id="wallpaper-upload" accept="image/*" style="display: none;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-item-col">
+                                <button class="ios-action-btn" id="reset-wallpaper-btn" style="width: 100%; padding: 10px 0;">恢复默认壁纸</button>
+                            </div>
+                        </div>
+
+                        <!-- 应用图标设置 -->
+                        <div class="settings-group" style="margin-top: 20px;">
+                            <div class="settings-item-title" style="padding: 15px 15px 5px;">应用图标</div>
+                            <div class="app-icon-grid">
+                                <!-- 消息应用图标 -->
+                                <div class="app-icon-item">
+                                    <div class="app-icon-preview icon-messages">
+                                        <i class="fa-solid fa-comment"></i>
+                                    </div>
+                                    <div class="app-icon-label">消息</div>
+                                    <div class="app-icon-edit" data-app="messages">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </div>
+                                    <input type="file" id="icon-upload-messages" accept="image/*" style="display: none;">
+                                </div>
+
+                                <!-- 世界书应用图标 -->
+                                <div class="app-icon-item">
+                                    <div class="app-icon-preview icon-worldbook">
+                                        <i class="fa-solid fa-book-globe"></i>
+                                    </div>
+                                    <div class="app-icon-label">世界书</div>
+                                    <div class="app-icon-edit" data-app="worldbook">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </div>
+                                    <input type="file" id="icon-upload-worldbook" accept="image/*" style="display: none;">
+                                </div>
+
+                                <!-- 相册应用图标 -->
+                                <div class="app-icon-item">
+                                    <div class="app-icon-preview icon-photos">
+                                        <i class="fa-solid fa-image"></i>
+                                    </div>
+                                    <div class="app-icon-label">相册</div>
+                                    <div class="app-icon-edit" data-app="photos">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </div>
+                                    <input type="file" id="icon-upload-photos" accept="image/*" style="display: none;">
+                                </div>
+
+                                <!-- 设置应用图标 -->
+                                <div class="app-icon-item">
+                                    <div class="app-icon-preview icon-settings">
+                                        <i class="fa-solid fa-gear"></i>
+                                    </div>
+                                    <div class="app-icon-label">设置</div>
+                                    <div class="app-icon-edit" data-app="settings">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </div>
+                                    <input type="file" id="icon-upload-settings" accept="image/*" style="display: none;">
+                                </div>
+
+                                <!-- 外观应用图标 -->
+                                <div class="app-icon-item">
+                                    <div class="app-icon-preview icon-appearance">
+                                        <i class="fa-solid fa-palette"></i>
+                                    </div>
+                                    <div class="app-icon-label">外观</div>
+                                    <div class="app-icon-edit" data-app="appearance">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </div>
+                                    <input type="file" id="icon-upload-appearance" accept="image/*" style="display: none;">
+                                </div>
+
+                                <!-- 浏览器应用图标 -->
+                                <div class="app-icon-item">
+                                    <div class="app-icon-preview icon-browser">
+                                        <i class="fa-brands fa-safari"></i>
+                                    </div>
+                                    <div class="app-icon-label">浏览器</div>
+                                    <div class="app-icon-edit" data-app="browser">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </div>
+                                    <input type="file" id="icon-upload-browser" accept="image/*" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 底部 Dock 栏 -->
                 <div class="dock-container">
                     <div class="dock">
