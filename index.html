@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone Simulator</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 引入 FontAwesome 图标库用于状态栏和应用图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="iphone-container">
+        <!-- 手机外框 -->
+        <div class="iphone-frame">
+            <!-- 屏幕区域 -->
+            <div class="screen">
+                <!-- 消息应用界面 -->
+                <div class="app-overlay" id="messages-app">
+                <div class="app-header">
+                    <div class="back-btn" id="back-to-home" style="visibility: hidden;"></div>
+                    <div class="title">对话</div>
+                    <div class="action-icon" id="header-plus-btn"><i class="fa-solid fa-plus"></i></div>
+                </div>
+
+<!-- 联系人选择弹窗 -->
+<!-- 联系人选择气泡框 -->
+<div class="modal-overlay contacts-center-modal" id="contacts-selector-modal" style="z-index: 350; background: rgba(0,0,0,0.4); display: none;">
+                    <div class="contact-selector-bubble">
+                        <div class="selector-header">
+                            <span class="modal-title">选择联系人</span>
+                            <span class="close-selector" id="close-contacts-selector"><i class="fa-solid fa-xmark"></i></span>
+                        </div>
+                        <div class="selector-body" id="contacts-selector-list">
+                            <!-- 联系人列表会由JS动态填充 -->
+                        </div>
+                    </div>
+                </div>
+                    <!-- 对话列表内容 -->
+                    <div class="app-content" id="chats-content">
+                        <div class="chat-item">
+                            <div class="chat-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="chat-info">
+                                <div class="chat-name">张三</div>
+                                <div class="chat-last-msg">好的，明天见！</div>
+                            </div>
+                        </div>
+                        <div class="chat-item">
+                            <div class="chat-avatar"><i class="fa-solid fa-user-group"></i></div>
+                            <div class="chat-info">
+                                <div class="chat-name">开发小组</div>
+                                <div class="chat-last-msg">Cline: 任务已完成。</div>
+                            </div>
+                        </div>
+                        <div class="chat-item">
+                            <div class="chat-avatar"><i class="fa-solid fa-robot"></i></div>
+                            <div class="chat-info">
+                                <div class="chat-name">AI 助手</div>
+                                <div class="chat-last-msg">有什么我可以帮您的吗？</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 通讯录内容 -->
+                    <div class="app-content" id="contacts-content" style="display: none;">
+                        <div class="contact-group">A</div>
+                        <div class="chat-item">
+                            <div class="chat-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="chat-info">
+                                <div class="chat-name">阿强</div>
+                            </div>
+                            <div class="contact-edit"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+                        </div>
+                        <div class="contact-group">L</div>
+                        <div class="chat-item">
+                            <div class="chat-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="chat-info">
+                                <div class="chat-name">李华</div>
+                            </div>
+                            <div class="contact-edit"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+                        </div>
+                        <div class="contact-group">W</div>
+                        <div class="chat-item">
+                            <div class="chat-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="chat-info">
+                                <div class="chat-name">王五</div>
+                            </div>
+                            <div class="contact-edit"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+                        </div>
+                        <div class="contact-group">Z</div>
+                        <div class="chat-item">
+                            <div class="chat-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="chat-info">
+                                <div class="chat-name">张三</div>
+                            </div>
+                            <div class="contact-edit"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- 状态 (朋友圈) 内容 -->
+                    <div class="app-content" id="status-content" style="display: none; padding-top: 0;">
+                        <div class="moments-header">
+                            <div class="moments-bg"></div>
+                            <div class="new-post-btn"><i class="fa-solid fa-camera"></i></div>
+                            <div class="user-info-moments">
+                                <div class="user-avatar-moments"><i class="fa-solid fa-user"></i></div>
+                                <div class="user-name-moments">我的名字</div>
+                            </div>
+                        </div>
+                        <div class="moments-posts">
+                            <div class="post-item">
+                                <div class="post-header">
+                                    <div class="post-avatar"><i class="fa-solid fa-user"></i></div>
+                                    <div class="post-user-info">
+                                        <span class="post-user-name">张三</span>
+                                        <span class="post-time">1小时前</span>
+                                    </div>
+                                </div>
+                                <div class="post-content">今天天气真不错！</div>
+                                <div class="post-actions">
+                                    <span class="post-action-btn"><i class="fa-regular fa-heart"></i></span>
+                                    <span class="post-action-btn"><i class="fa-regular fa-comment"></i></span>
+                                </div>
+                            </div>
+                            <div class="post-item">
+                                <div class="post-header">
+                                    <div class="post-avatar"><i class="fa-solid fa-user-group"></i></div>
+                                    <div class="post-user-info">
+                                        <span class="post-user-name">开发小组</span>
+                                        <span class="post-time">3小时前</span>
+                                    </div>
+                                </div>
+                                <div class="post-content">新功能上线了，大家快来体验。</div>
+                                <div class="post-actions">
+                                    <span class="post-action-btn"><i class="fa-regular fa-heart"></i></span>
+                                    <span class="post-action-btn"><i class="fa-regular fa-comment"></i></span>
+                                </div>
+                            </div>
+                            <div class="post-item">
+                                <div class="post-header">
+                                    <div class="post-avatar"><i class="fa-solid fa-robot"></i></div>
+                                    <div class="post-user-info">
+                                        <span class="post-user-name">AI 助手</span>
+                                        <span class="post-time">昨天</span>
+                                    </div>
+                                </div>
+                                <div class="post-content">很高兴能为您服务。</div>
+                                <div class="post-actions">
+                                    <span class="post-action-btn"><i class="fa-regular fa-heart"></i></span>
+                                    <span class="post-action-btn"><i class="fa-regular fa-comment"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- "我"页面内容 -->
+                    <div class="app-content" id="me-content" style="display: none; background-color: #000;">
+                        <div class="me-profile">
+                            <div class="me-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="me-info">
+                                <div class="me-name">我的名字</div>
+                            </div>
+                        </div>
+
+                        <div class="me-list">
+                            <div class="me-list-item">
+                                <i class="fa-solid fa-wallet icon-white"></i>
+                                <span>钱包</span>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </div>
+                        </div>
+
+                        <div class="me-list">
+                            <div class="me-list-item">
+                                <i class="fa-solid fa-face-smile icon-white"></i>
+                                <span>表情</span>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </div>
+                        </div>
+
+                        <div class="me-list">
+                            <div class="me-list-item">
+                                <i class="fa-solid fa-gear icon-white"></i>
+                                <span>设置</span>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 聊天详情界面 (Telegram 风格) -->
+                    <div class="app-overlay" id="chat-detail" style="z-index: 300;">
+                        <div class="app-header chat-detail-header">
+                            <div class="back-btn" id="back-to-chats"><i class="fa-solid fa-chevron-left"></i></div>
+                            <div class="chat-detail-info">
+                                <div class="chat-detail-name">张三</div>
+                                <div class="chat-detail-status">在线</div>
+                            </div>
+                            <div class="chat-detail-avatar" id="open-chat-settings"></div>
+                        </div>
+                        <div class="app-content chat-messages" id="chat-messages">
+                            <div class="message-date">3月7日</div>
+                            <div class="message-bubble received">
+                                <div class="message-text">你好！最近怎么样？</div>
+                                <div class="message-time">21:45</div>
+                            </div>
+                            <div class="message-bubble sent">
+                                <div class="message-text">挺好的，正在用 Cline 开发模拟器呢。</div>
+                                <div class="message-time">21:46 <i class="fa-solid fa-check-double"></i></div>
+                            </div>
+                            <div class="message-bubble received">
+                                <div class="message-text">太棒了！加油！</div>
+                                <div class="message-time">21:47</div>
+                            </div>
+                        </div>
+                        <div class="chat-input-bar">
+                            <div style="position: relative;">
+                                <i class="fa-solid fa-plus chat-input-icon" id="toggle-chat-tools" style="font-size: 22px;"></i>
+                                <!-- 新的弹出工具菜单 -->
+                                <div class="chat-menu-popup" id="chat-tools-menu">
+                                    <div class="chat-menu-item">
+                                        <i class="fa-solid fa-image"></i>
+                                        <span>图片</span>
+                                    </div>
+                                    <div class="chat-menu-item">
+                                        <i class="fa-solid fa-yen-sign"></i>
+                                        <span>转账</span>
+                                    </div>
+                                    <div class="chat-menu-item">
+                                        <i class="fa-solid fa-phone"></i>
+                                        <span>语音通话</span>
+                                    </div>
+                                    <div class="chat-menu-item">
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                        <span>重回</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chat-input-field" contenteditable="true" placeholder="消息"></div>
+                            <i class="fa-regular fa-face-smile chat-input-icon" id="toggle-emoji-picker" style="font-size: 22px;"></i>
+                            <i class="fa-solid fa-paper-plane chat-input-icon" id="send-message-btn" style="font-size: 18px;"></i>
+                        </div>
+                    </div>
+
+                    <!-- 聊天设置界面 -->
+                    <div class="app-overlay" id="chat-settings" style="z-index: 350;">
+                        <div class="app-header">
+                            <div class="back-btn" id="back-to-chat-detail"><i class="fa-solid fa-chevron-left"></i> 返回</div>
+                            <div class="title">聊天设置</div>
+                            <div class="action-icon" id="save-chat-settings"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                        <div class="app-content">
+                            <div class="settings-group">
+                                <div class="settings-item-col">
+                                    <div class="settings-item-title">聊天背景</div>
+                                    <div class="bg-preview-container">
+                                        <div class="bg-preview" id="current-bg-preview">
+                                            <i class="fa-solid fa-image" style="font-size: 24px; color: #555;"></i>
+                                            <span style="margin-top: 8px; color: #888; font-size: 14px;">点击更换背景</span>
+                                            <input type="file" id="bg-upload" accept="image/*" style="display: none;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="settings-item-col">
+                                    <button class="ios-action-btn" id="reset-bg-btn" style="width: 100%; padding: 10px 0;">恢复默认背景</button>
+                                </div>
+                            </div>
+
+                            <div class="settings-group">
+                                <div class="settings-item-col">
+                                    <div class="settings-item-title">聊天气泡透明度</div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding: 0 5px;">
+                                        <span class="slider-label">0</span>
+                                        <span id="opacity-value" style="color: #007aff; font-weight: bold; font-size: 14px;">0.8</span>
+                                        <span class="slider-label">1.0</span>
+                                    </div>
+                                    <div style="padding: 12px 0 8px;">
+                                        <input type="range" id="opacity-slider" class="ios-slider" min="0.1" max="1" step="0.1" value="0.8">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="app-tab-bar">
+                        <div class="tab-item active">
+                            <i class="fa-solid fa-comment"></i>
+                            <span>对话</span>
+                        </div>
+                        <div class="tab-item">
+                            <i class="fa-solid fa-address-book"></i>
+                            <span>通讯录</span>
+                        </div>
+                        <div class="tab-item">
+                            <i class="fa-solid fa-circle-dot"></i>
+                            <span>状态</span>
+                        </div>
+                        <div class="tab-item">
+                            <i class="fa-solid fa-user"></i>
+                            <span>我</span>
+                        </div>
+                    </div>
+
+                    <!-- 新人物设置弹窗 (嵌套在消息应用内部) -->
+                    <div class="modal-overlay" id="new-character-modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <span class="modal-btn modal-cancel" id="close-character-modal">取消</span>
+                                <span class="modal-title">新人物</span>
+                                <span class="modal-btn modal-save" id="save-character">存储</span>
+                            </div>
+                            <div class="modal-body">
+                                <!-- 头像设置 -->
+                                <div class="setup-avatar-section">
+                                    <div class="setup-avatar-preview">
+                                        <i class="fa-solid fa-user" id="avatar-preview-icon"></i>
+                                        <img id="avatar-preview-img" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="头像预览">
+                                    </div>
+                                    <div class="setup-avatar-action">
+                                        设置头像
+                                        <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+                                    </div>
+                                </div>
+                                
+                                <div class="settings-group">
+                                    <div class="settings-item-col">
+                                        <div class="settings-item-title">名称</div>
+                                        <input type="text" id="char-name-input" class="ios-input-minimal" placeholder="请输入角色名称">
+                                    </div>
+                                </div>
+
+                                <div class="settings-group">
+                                    <div class="settings-item-col">
+                                        <div class="settings-item-title">人设 Prompt</div>
+                                        <textarea id="char-persona-input" class="ios-textarea-minimal" placeholder="在此输入角色的背景、性格、说话方式等设定..." rows="6"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="settings-group">
+                                    <div class="settings-item-col">
+                                        <div class="settings-item-title">挂载世界书 (可多选)</div>
+                                        <div id="worldbook-mount-list" style="padding: 10px 0; display: flex; flex-direction: column; gap: 10px;">
+                                            <!-- 动态加载世界书复选框 -->
+                                            <div style="color: #666; font-size: 14px;">暂无可用世界书</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div style="height: 50px;"></div> <!-- 底部占位 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 状态栏 -->
+                <div class="status-bar">
+                    <div class="time" id="clock">09:41</div>
+                    <div class="status-icons">
+                        <i class="fa-solid fa-signal"></i>
+                        <i class="fa-solid fa-wifi"></i>
+                        <i class="fa-solid fa-battery-full"></i>
+                    </div>
+                </div>
+
+                <!-- 桌面应用区域 -->
+                <div class="desktop">
+                    <!-- 上半部分应用 -->
+                    <div class="app-grid">
+                        <div class="app-item" data-name="消息">
+                            <div class="app-icon icon-messages">
+                                <i class="fa-solid fa-comment"></i>
+                            </div>
+                            <span class="app-name">消息</span>
+                        </div>
+                        <div class="app-item" data-name="世界书">
+                            <div class="app-icon icon-worldbook">
+                                <i class="fa-solid fa-book-globe"></i>
+                            </div>
+                            <span class="app-name">世界书</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 世界书应用界面 -->
+                <div class="app-overlay" id="worldbook-app" style="background-color: #000;">
+                    <div class="app-header">
+                        <div class="back-btn" id="back-to-home-worldbook" style="visibility: hidden;"><i class="fa-solid fa-chevron-left"></i> 返回</div>
+                        <div class="title">世界书</div>
+                        <div class="action-icon" id="add-worldbook-btn"><i class="fa-solid fa-plus"></i></div>
+                    </div>
+                    <div class="app-content" id="worldbook-list" style="padding: 15px;">
+                        <!-- 世界书列表项将由 JS 动态渲染 -->
+                    </div>
+
+                    <!-- 添加/编辑世界书弹窗 -->
+                    <div class="modal-overlay" id="worldbook-modal">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <span class="modal-btn modal-cancel" id="close-worldbook-modal">取消</span>
+                                <span class="modal-title">新增世界书</span>
+                                <span class="modal-btn modal-save" id="save-worldbook">存储</span>
+                            </div>
+                            <div class="modal-body">
+                                <div class="settings-group">
+                                    <div class="settings-item-col">
+                                        <div class="settings-item-title">世界书名称</div>
+                                        <input type="text" id="worldbook-name-input" class="ios-input-minimal" placeholder="例如：克苏鲁神话">
+                                    </div>
+                                </div>
+                                <div class="settings-group">
+                                    <div class="settings-item-col">
+                                        <div class="settings-item-title">分类</div>
+                                        <div class="model-select-container">
+                                            <select id="worldbook-category-select" class="ios-select">
+                                                <option value="克苏鲁">克苏鲁</option>
+                                                <option value="赛博朋克">赛博朋克</option>
+                                                <option value="玄幻">玄幻</option>
+                                                <option value="日常">日常</option>
+                                                <option value="new">-- 新建分组 --</option>
+                                            </select>
+                                        </div>
+                                        <input type="text" id="new-category-input" class="ios-input-minimal" placeholder="请输入新分组名称" style="margin-top: 10px; display: none;">
+                                    </div>
+                                </div>
+                                <div class="settings-group">
+                                    <div class="settings-item-col">
+                                        <div class="settings-item-title">世界书指令 (AI 必须严格遵守)</div>
+                                        <textarea id="worldbook-content-input" class="ios-textarea-minimal" placeholder="在此输入针对该领域的详细文字指令、背景设定、禁忌等..." rows="12"></textarea>
+                                    </div>
+                                </div>
+                                <div style="height: 50px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 设置应用界面 -->
+                <div class="app-overlay" id="settings-app" style="background-color: #000;">
+                    <!-- 主设置列表 -->
+                    <div id="settings-main-list" style="display: flex; flex-direction: column; height: 100%;">
+                        <div class="app-header">
+                            <div class="title" style="font-size: 18px;">设置</div>
+                        </div>
+                        <div class="app-content">
+                            <div class="settings-group">
+                                <div class="me-list-item" id="open-api-settings">
+                                    <div style="background: #007aff; width: 32px; height: 32px; border-radius: 8px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; line-height: 0;">
+                                        <i class="fa-solid fa-key icon-white" style="font-size: 16px; margin: 0; padding: 0; display: block;"></i>
+                                    </div>
+                                    <span style="font-size: 18px; margin-left: 15px;">API设置</span>
+                                    <i class="fa-solid fa-chevron-right arrow"></i>
+                                </div>
+                            <div class="me-list-item">
+                                <div style="background: #ff9500; width: 32px; height: 32px; border-radius: 8px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; line-height: 0;">
+                                    <i class="fa-solid fa-microphone-lines icon-white" style="font-size: 16px; margin: 0; padding: 0; display: block;"></i>
+                                </div>
+                                <span style="font-size: 18px; margin-left: 15px;">Minimax语音设置</span>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </div>
+                            <div class="me-list-item">
+                                <div style="background: #ff3b30; width: 32px; height: 32px; border-radius: 8px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; line-height: 0;">
+                                    <i class="fa-solid fa-bell icon-white" style="font-size: 16px; margin: 0; padding: 0; display: block;"></i>
+                                </div>
+                                <span style="font-size: 18px; margin-left: 15px;">消息通知</span>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </div>
+                                <div class="me-list-item">
+                                    <div style="background: #4cd964; width: 32px; height: 32px; border-radius: 8px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; line-height: 0;">
+                                        <i class="fa-solid fa-database icon-white" style="font-size: 16px; margin: 0; padding: 0; display: block;"></i>
+                                    </div>
+                                    <span style="font-size: 18px; margin-left: 15px;">数据导出/导入</span>
+                                    <i class="fa-solid fa-chevron-right arrow"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- API 设置详情页 -->
+                    <div id="api-settings-detail" style="display: none; flex-direction: column; height: 100%;">
+                        <div class="app-header">
+                            <div class="back-btn" id="back-to-settings-list"><i class="fa-solid fa-chevron-left"></i> 设置</div>
+                            <div class="title" style="font-size: 18px;">API设置</div>
+                            <div class="action-icon" id="save-api-settings" style="font-size: 17px; font-weight: 600;">存储</div>
+                        </div>
+                        <div class="app-content">
+                            <div class="settings-group">
+                                <div class="settings-item-col">
+                                    <div class="settings-item-title">API接口地址url</div>
+                                    <input type="text" id="api-url-input" class="ios-input-minimal" placeholder="请输入接口地址">
+                                </div>
+                                <div class="settings-item-col">
+                                    <div class="settings-item-title">API Key</div>
+                                    <input type="password" id="api-key-input" class="ios-input-minimal" placeholder="请输入 API Key">
+                                </div>
+                                <div class="settings-item-col">
+                                    <div class="settings-item-title">模型选择</div>
+                                    <div class="model-select-container">
+                                        <select id="model-dropdown" class="ios-select">
+                                            <option value="">请先拉取模型</option>
+                                        </select>
+                                        <button id="fetch-models-btn" class="ios-action-btn">拉取模型</button>
+                                    </div>
+                                </div>
+                                <div class="settings-item-col">
+                                    <div class="settings-item-title">温度</div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding: 0 5px;">
+                                        <span class="slider-label">0</span>
+                                        <span id="temp-value" style="color: #007aff; font-weight: bold; font-size: 14px;">1.0</span>
+                                        <span class="slider-label">2.0</span>
+                                    </div>
+                                    <div style="padding: 12px 0 8px;">
+                                        <input type="range" id="temp-slider" class="ios-slider" min="0" max="2" step="0.1" value="1.0">
+                                    </div>
+                                </div>
+                                <div class="settings-item-col">
+                                    <div class="settings-item-title">Tokens 限制</div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 2px;">设置单次对话回复所允许消耗的最大 Token 数量，输入 0 代表不限制</div>
+                                    <input type="number" id="api-tokens-input" class="ios-input-minimal" placeholder="请输入最大 Token 数 (如 2048)" style="margin-top: 8px;" min="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 底部 Dock 栏 -->
+                <div class="dock-container">
+                    <div class="dock">
+                        <div class="app-item" data-name="相册">
+                            <div class="app-icon icon-photos">
+                                <i class="fa-solid fa-image"></i>
+                            </div>
+                        </div>
+                        <div class="app-item" data-name="外观">
+                            <div class="app-icon icon-appearance">
+                                <i class="fa-solid fa-palette"></i>
+                            </div>
+                        </div>
+                        <div class="app-item" data-name="设置">
+                            <div class="app-icon icon-settings">
+                                <i class="fa-solid fa-gear"></i>
+                            </div>
+                        </div>
+                        <div class="app-item" data-name="浏览器">
+                            <div class="app-icon icon-browser">
+                                <i class="fa-brands fa-safari"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
